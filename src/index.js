@@ -1,13 +1,24 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
+import { Provider } from 'react-redux';
+import { ThemeProvider } from 'styled-components';
+// import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
+import store from './store';
+import theme from './constants/theme';
+import GlobalStyle from './components/GlobalStyle';
+import './services/websocket';
 
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+  <Provider store={store}>
+    <ThemeProvider theme={theme}>
+      <GlobalStyle />
+      {/* <BrowserRouter> */}
+      <App />
+      {/* </BrowserRouter> */}
+    </ThemeProvider>
+  </Provider>,
   document.getElementById('root')
 );
 

@@ -1,25 +1,31 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import styled from 'styled-components';
+import OrderBook from './components/OrderBook';
+import Ticker from './components/Ticker';
+import Trades from './components/Trades';
+import WebSocketActions from './components/WebSocketActions';
+
+const Root = styled.div`
+  margin: ${(props) => props.theme.spacing(3)} auto;
+  max-width: 1024px;
+`;
+
+const Flex = styled.div`
+  display: flex;
+`;
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Root>
+      <Flex>
+        <Ticker />
+        <WebSocketActions />
+      </Flex>
+      <Flex>
+        <OrderBook />
+        <Trades />
+      </Flex>
+    </Root>
   );
 }
 
