@@ -1,9 +1,10 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 import camelcaseKeys from '../helpers/camelcaseKeys';
 
 const initialState = {
   isSubscribed: false,
   chanId: null,
+  data: {},
 };
 
 const tickerSlice = createSlice({
@@ -41,25 +42,11 @@ const tickerSlice = createSlice({
         HIGH,
         LOW,
       });
+      state.data.dailyChange = state.data.dailyChange.toFixed(2);
+      state.data.dailyChangeRelative = (
+        state.data.dailyChangeRelative * 100
+      ).toFixed(2);
     },
-  },
-  extraReducers: {
-    // [connect.pending]: (state) => {
-    //   state.isConnecting = true;
-    // },
-    receiveMessage: (state, action) => {
-      console.log('action', action.payload);
-      // state.isSubscribed = false;
-      // state.chanId = action.payload.chanId;
-    },
-    // [disconnect.pending]: (state) => {
-    //   state.isDisconnecting = true;
-    // },
-    // [disconnect.fulfilled]: (state) => {
-    //   ticker = null;
-    //   state.isConnected = false;
-    //   state.isDisconnecting = false;
-    // },
   },
 });
 

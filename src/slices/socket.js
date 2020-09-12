@@ -1,27 +1,39 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import * as webSocketService from '../services/websocket';
 import tickerSlice from './ticker';
+import bookSlice from './book';
 
 export const connect = createAsyncThunk(
   'socket/connect',
   (_, { getState, dispatch }) =>
     webSocketService.connect().then(({ onopenEvent, socket }) => {
       webSocketService.subscribeTicker();
+      webSocketService.subscribeBook();
 
       socket.onmessage = (event) => {
         const data = JSON.parse(event.data);
-        console.log('socket.onmessage -> data', data);
+        // console.log('socket.onmessage -> data', data);
 
         if (data.event === 'subscribed' && data.channel === 'ticker') {
           dispatch(tickerSlice.actions.subscribed(data));
+        }
+
+        if (data.event === 'subscribed' && data.channel === 'book') {
+          dispatch(bookSlice.actions.subscribed(data));
         }
 
         if (Array.isArray(data)) {
           const rootState = getState();
           const [chanId, payload] = data;
 
-          if (chanId === rootState.ticker.chanId && payload.length === 10) {
+          if (chanId === rootState.ticker.chanId && payload !== 'hb') {
             dispatch(tickerSlice.actions.receiveMessage(payload));
+          }
+
+          if (chanId === rootState.book.chanId && payload !== 'hb') {
+            dispatch(
+              bookSlice.actions.receiveMessage({ data: payload, rootState })
+            );
           }
         }
       };

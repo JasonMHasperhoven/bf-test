@@ -12,6 +12,7 @@ const Root = styled.div`
 
 const Flex = styled.div`
   display: flex;
+  margin-bottom: ${(props) => props.theme.spacing()};
 `;
 
 function App() {

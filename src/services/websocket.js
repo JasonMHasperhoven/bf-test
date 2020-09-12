@@ -30,6 +30,14 @@ export function subscribeTicker() {
   });
 }
 
+export function subscribeBook() {
+  send({
+    event: 'subscribe',
+    channel: 'book',
+    symbol: 'tBTCUSD',
+  });
+}
+
 // socket.onmessage = (event) => {
 //   store.dispatch({
 //     type: 'receiveMessage',

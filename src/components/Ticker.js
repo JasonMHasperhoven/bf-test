@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useSelector } from 'react-redux';
+import formatter from '../helpers/formatter';
 
 const Root = styled.div`
   width: 350px;
@@ -27,34 +28,35 @@ const SubText = styled.div`
   color: ${(props) => props.theme.primaryTextColor3};
 `;
 
+const DailyChange = styled.div`
+  font-size: 13px;
+  color: ${(props) => props.theme.primaryTextColor3};
+
+  ${(props) => props.positive && `color: ${props.theme.buyColor};`}
+  ${(props) => props.negative && `color: ${props.theme.sellColor};`}
+`;
+
 export default function Ticker(props) {
   const ticker = useSelector((state) => state.ticker.data);
-
-  const formatter = new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'usd',
-  });
 
   return (
     <Root>
       <Icon src="https://www.bitfinex.com/assets/BTC-alt-631a4985ef5564fba7508526f8952ba54cd598318506bee963cc9b6d00600278.svg" />
-      {ticker && (
-        <>
-          <TextWrapper>
-            <Text>BTC/USD</Text>
-            <SubText>VOL {formatter.format(ticker.volume)}</SubText>
-            <SubText>LOW {formatter.format(ticker.low)}</SubText>
-          </TextWrapper>
-          <TextWrapper>
-            <Text>{formatter.format(ticker.lastPrice)}</Text>
-            <SubText>
-              {Math.round(ticker.dailyChange * 100) / 100} (
-              {Math.round(ticker.dailyChangeRelative * 10000) / 100}%)
-            </SubText>
-            <SubText>HIGH {formatter.format(ticker.high)}</SubText>
-          </TextWrapper>
-        </>
-      )}
+      <TextWrapper>
+        <Text>BTC/USD</Text>
+        <SubText>VOL {formatter.format(ticker.volume)}</SubText>
+        <SubText>LOW {formatter.format(ticker.low)}</SubText>
+      </TextWrapper>
+      <TextWrapper>
+        <Text>{formatter.format(ticker.lastPrice)}</Text>
+        <DailyChange
+          positive={ticker.dailyChangeRelative > 0}
+          negative={ticker.dailyChangeRelative < 0}
+        >
+          {ticker.dailyChange} ({ticker.dailyChangeRelative}%)
+        </DailyChange>
+        <SubText>HIGH {formatter.format(ticker.high)}</SubText>
+      </TextWrapper>
     </Root>
   );
 }

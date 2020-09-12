@@ -1,6 +1,7 @@
 import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
 import socketSlice from './slices/socket';
 import tickerSlice from './slices/ticker';
+import bookSlice from './slices/book';
 
 export const makeStore = (preloadedState = {}) =>
   configureStore({
@@ -8,6 +9,7 @@ export const makeStore = (preloadedState = {}) =>
     reducer: {
       socket: socketSlice.reducer,
       ticker: tickerSlice.reducer,
+      book: bookSlice.reducer,
     },
     // middleware: getDefaultMiddleware({
     //   // thunk: {
