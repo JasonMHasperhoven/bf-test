@@ -1,27 +1,43 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import * as webSocketService from '../services/websocket';
+import tickerSlice from './ticker';
 
 export const connect = createAsyncThunk(
   'socket/connect',
-  () =>
-    new Promise((resolve) => {
-      const socket = new WebSocket('wss://api-pub.bitfinex.com/ws/2');
-      socket.onopen = () => resolve(socket);
+  (_, { getState, dispatch }) =>
+    webSocketService.connect().then(({ onopenEvent, socket }) => {
+      webSocketService.subscribeTicker();
+
+      socket.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        console.log('socket.onmessage -> data', data);
+
+        if (data.event === 'subscribed' && data.channel === 'ticker') {
+          dispatch(tickerSlice.actions.subscribed(data));
+        }
+
+        if (Array.isArray(data)) {
+          const rootState = getState();
+          const [chanId, payload] = data;
+
+          if (chanId === rootState.ticker.chanId && payload.length === 10) {
+            dispatch(tickerSlice.actions.receiveMessage(payload));
+          }
+        }
+      };
+
+      return onopenEvent.data;
     })
 );
 
-export const disconnect = createAsyncThunk(
-  'socket/disconnect',
-  (_, { getState }) =>
-    new Promise((resolve) => {
-      const socket = getState().socket.instance;
-      socket.close();
-      socket.onclose = () => resolve();
-    })
+export const disconnect = createAsyncThunk('socket/disconnect', () =>
+  webSocketService.disconnect()
 );
 
 const initialState = {
-  instance: null,
   isConnected: false,
+  isConnecting: false,
+  isDisconnecting: false,
 };
 
 const socketSlice = createSlice({
@@ -29,13 +45,19 @@ const socketSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: {
+    [connect.pending]: (state) => {
+      state.isConnecting = true;
+    },
     [connect.fulfilled]: (state, action) => {
-      state.instance = action.payload;
       state.isConnected = true;
+      state.isConnecting = false;
+    },
+    [disconnect.pending]: (state) => {
+      state.isDisconnecting = true;
     },
     [disconnect.fulfilled]: (state) => {
-      state.instance = null;
       state.isConnected = false;
+      state.isDisconnecting = false;
     },
   },
 });

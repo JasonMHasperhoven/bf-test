@@ -76,6 +76,46 @@ export default styled.button`
       `}
     `}
 
+    ${(props) =>
+    props.green &&
+    css`
+      background: ${(props) => props.theme.buyColor};
+      border-color: ${(props) => props.theme.buyColor};
+      color: ${(props) => props.theme.primaryTextColor};
+
+      ${(props) =>
+        props.loading &&
+        css`
+          background-image: repeating-linear-gradient(
+            -45deg,
+            transparent,
+            transparent 1rem,
+            rgba(0, 0, 0, 0.1) 1rem,
+            rgba(0, 0, 0, 0.1) 2rem
+          );
+        `}
+    `}
+
+    ${(props) =>
+    props.red &&
+    css`
+      background: ${(props) => props.theme.sellColor};
+      border-color: ${(props) => props.theme.sellColor};
+      color: ${(props) => props.theme.primaryTextColor};
+
+      ${(props) =>
+        props.loading &&
+        css`
+          background-image: repeating-linear-gradient(
+            -45deg,
+            transparent,
+            transparent 1rem,
+            rgba(0, 0, 0, 0.1) 1rem,
+            rgba(0, 0, 0, 0.1) 2rem
+          );
+        `}
+    `}
+
   &[disabled] {
     cursor: default;
   }

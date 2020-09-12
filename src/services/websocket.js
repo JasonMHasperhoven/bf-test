@@ -1,13 +1,38 @@
-const w = new WebSocket('wss://api-pub.bitfinex.com/ws/2');
+// import store from '../store';
 
-w.onmessage = (msg) => console.log(msg.data);
+export let socket;
 
-const tickerSubscriptionMessage = JSON.stringify({
-  event: 'subscribe',
-  channel: 'ticker',
-  symbol: 'tBTCUSD',
-});
+export function connect() {
+  return new Promise((resolve) => {
+    socket = new WebSocket('wss://api-pub.bitfinex.com/ws/2');
+    socket.onopen = (event) => {
+      resolve({ onopenEvent: event, socket });
+    };
+  });
+}
 
-w.onopen = () => w.send(tickerSubscriptionMessage);
+export function disconnect() {
+  return new Promise((resolve) => {
+    socket.close();
+    socket.onclose = (event) => resolve(event.data);
+  });
+}
 
-w.close();
+export function send(eventMessage) {
+  socket.send(JSON.stringify(eventMessage));
+}
+
+export function subscribeTicker() {
+  send({
+    event: 'subscribe',
+    channel: 'ticker',
+    symbol: 'tBTCUSD',
+  });
+}
+
+// socket.onmessage = (event) => {
+//   store.dispatch({
+//     type: 'receiveMessage',
+//     payload: JSON.parse(event.data),
+//   });
+// };
