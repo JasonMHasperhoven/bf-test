@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { useSelector } from 'react-redux';
 import formatter from '../helpers/formatter';
+import NoDetails from './NoDetails';
 
 const Root = styled.div`
   width: 350px;
@@ -37,29 +38,42 @@ const DailyChange = styled.div`
   ${(props) => props.negative && `color: ${props.theme.sellColor};`}
 `;
 
-export default function Ticker(props) {
+export default function Ticker() {
   const ticker = useSelector((state) => state.ticker.data);
 
   return (
     <Root>
       <Icon src="https://www.bitfinex.com/assets/BTC-alt-631a4985ef5564fba7508526f8952ba54cd598318506bee963cc9b6d00600278.svg" />
-      <TextWrapper>
-        <Text>BTC/USD</Text>
-        <SubText>
-          VOL {ticker.volume && formatter.format(ticker.volume)}
-        </SubText>
-        <SubText>LOW {ticker.low && formatter.format(ticker.low)}</SubText>
-      </TextWrapper>
-      <TextWrapper>
-        <Text>{ticker.lastPrice && formatter.format(ticker.lastPrice)}</Text>
-        <DailyChange
-          positive={ticker.dailyChangeRelative > 0}
-          negative={ticker.dailyChangeRelative < 0}
-        >
-          {ticker.dailyChange} ({ticker.dailyChangeRelative}%)
-        </DailyChange>
-        <SubText>HIGH {ticker.high && formatter.format(ticker.high)}</SubText>
-      </TextWrapper>
+      {Object.keys(ticker).length ? (
+        <>
+          <TextWrapper>
+            <Text>BTC/USD</Text>
+            <SubText data-testid="volume">
+              VOL {formatter.format(ticker.volume)}
+            </SubText>
+            <SubText data-testid="low">
+              LOW {formatter.format(ticker.low)}
+            </SubText>
+          </TextWrapper>
+          <TextWrapper>
+            <Text data-testid="last-price">
+              {formatter.format(ticker.lastPrice)}
+            </Text>
+            <DailyChange
+              positive={ticker.dailyChangeRelative > 0}
+              negative={ticker.dailyChangeRelative < 0}
+              data-testid="daily-change"
+            >
+              {ticker.dailyChange} ({ticker.dailyChangeRelative}%)
+            </DailyChange>
+            <SubText data-testid="high">
+              HIGH {formatter.format(ticker.high)}
+            </SubText>
+          </TextWrapper>
+        </>
+      ) : (
+        <NoDetails>No Details</NoDetails>
+      )}
     </Root>
   );
 }

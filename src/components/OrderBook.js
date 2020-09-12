@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styled, { css } from 'styled-components';
 import { useSelector } from 'react-redux';
 import formatter from '../helpers/formatter';
+import NoDetails from './NoDetails';
 
 const Root = styled.div`
   background: ${(props) => props.theme.secondaryBg};
@@ -179,6 +180,7 @@ export default function OrderBook() {
               onClick={
                 precision > 0 ? () => setPrecision(precision - 1) : undefined
               }
+              data-testid="decrease-precision"
             >
               -
             </Button>
@@ -187,6 +189,7 @@ export default function OrderBook() {
               onClick={
                 precision < 3 ? () => setPrecision(precision + 1) : undefined
               }
+              data-testid="increase-precision"
             >
               +
             </Button>
@@ -197,6 +200,7 @@ export default function OrderBook() {
               onClick={
                 barDepth > 0 ? () => setBarDepth(barDepth - 1) : undefined
               }
+              data-testid="decrease-bardepth"
             >
               <ZoomOutIcon />
             </Button>
@@ -205,6 +209,7 @@ export default function OrderBook() {
               onClick={
                 barDepth < 10 ? () => setBarDepth(barDepth + 1) : undefined
               }
+              data-testid="increase-bardepth"
             >
               <ZoomInIcon />
             </Button>
@@ -222,17 +227,30 @@ export default function OrderBook() {
             </Row>
           </ListHeader>
           <ListBody>
-            {bids.reverse().map((order) => (
-              <Row key={order.price}>
-                <RowBar bid width={(lastPrice - order.price) * barDepth} />
-                <Col>{order.count}</Col>
-                <Col>{Number(order.amount).toFixed(precision)}</Col>
-                <Col>{Number(order.total).toFixed(precision)}</Col>
-                <Col>
-                  {formatter.format(roundPrice(order.price, precision))}
-                </Col>
-              </Row>
-            ))}
+            {bids.length ? (
+              bids.reverse().map((order) => (
+                <Row key={order.price}>
+                  <RowBar
+                    bid
+                    width={(lastPrice - order.price) * barDepth}
+                    data-testid="bid-bar"
+                    data-teststate={(order.price - lastPrice) * barDepth}
+                  />
+                  <Col data-testid="bid-count">{order.count}</Col>
+                  <Col data-testid="bid-amount">
+                    {Number(order.amount).toFixed(precision)}
+                  </Col>
+                  <Col data-testid="bid-total">
+                    {Number(order.total).toFixed(precision)}
+                  </Col>
+                  <Col data-testid="bid-price">
+                    {formatter.format(roundPrice(order.price, precision))}
+                  </Col>
+                </Row>
+              ))
+            ) : (
+              <NoDetails>No details</NoDetails>
+            )}
           </ListBody>
         </List>
         <List>
@@ -245,17 +263,30 @@ export default function OrderBook() {
             </Row>
           </ListHeader>
           <ListBody>
-            {asks.map((order) => (
-              <Row key={order.price}>
-                <RowBar ask width={(order.price - lastPrice) * barDepth} />
-                <Col>
-                  {formatter.format(roundPrice(order.price, precision))}
-                </Col>
-                <Col>{Number(order.total).toFixed(precision)}</Col>
-                <Col>{Number(order.amount).toFixed(precision)}</Col>
-                <Col>{order.count}</Col>
-              </Row>
-            ))}
+            {asks.length ? (
+              asks.map((order) => (
+                <Row key={order.price}>
+                  <RowBar
+                    ask
+                    width={(order.price - lastPrice) * barDepth}
+                    data-testid="ask-bar"
+                    data-teststate={(order.price - lastPrice) * barDepth}
+                  />
+                  <Col data-testid="ask-price">
+                    {formatter.format(roundPrice(order.price, precision))}
+                  </Col>
+                  <Col data-testid="ask-total">
+                    {Number(order.total).toFixed(precision)}
+                  </Col>
+                  <Col data-testid="ask-amount">
+                    {Number(order.amount).toFixed(precision)}
+                  </Col>
+                  <Col data-testid="ask-count">{order.count}</Col>
+                </Row>
+              ))
+            ) : (
+              <NoDetails>No details</NoDetails>
+            )}
           </ListBody>
         </List>
       </Body>

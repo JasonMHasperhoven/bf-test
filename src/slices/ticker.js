@@ -12,7 +12,6 @@ const tickerSlice = createSlice({
   initialState,
   reducers: {
     subscribed: (state, action) => {
-      console.log('action.payload', action.payload);
       state.isSubscribed = true;
       state.chanId = action.payload.chanId;
     },

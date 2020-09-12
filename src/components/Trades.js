@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { useSelector } from 'react-redux';
 import timestampToTime from '../helpers/timestampToTime';
+import NoDetails from './NoDetails';
 
 const Root = styled.div`
   background: ${(props) => props.theme.secondaryBg};
@@ -82,13 +83,19 @@ export default function Trades() {
             </Row>
           </ListHeader>
           <ListBody>
-            {trades.map((trade) => (
-              <Row key={trade.id} positive={trade.amount > 0}>
-                <Col>{timestampToTime(trade.mts)}</Col>
-                <Col>{trade.price}</Col>
-                <Col>{trade.amount}</Col>
-              </Row>
-            ))}
+            {trades.length ? (
+              trades.map((trade) => (
+                <Row key={trade.id} positive={trade.amount > 0}>
+                  <Col data-testid="trade-time">
+                    {timestampToTime(trade.mts)}
+                  </Col>
+                  <Col data-testid="trade-price">{trade.price}</Col>
+                  <Col data-testid="trade-amount">{trade.amount}</Col>
+                </Row>
+              ))
+            ) : (
+              <NoDetails>No details</NoDetails>
+            )}
           </ListBody>
         </List>
       </Body>
