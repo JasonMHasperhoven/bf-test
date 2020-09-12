@@ -61,16 +61,6 @@ const Col = styled.div`
 
 export default function OrderBook(props) {
   const { bids, asks } = useSelector((state) => state.book);
-  const ticker = useSelector((state) => state.ticker.data);
-  // const dispatch = useDispatch();
-  // const bills = useSelector((state: RootState) =>
-  //   state.bills.data.filter((bill) => bill.isBill === isBill)
-  // );
-  // const [openBillId, setOpenBillId] = useState('');
-
-  // useEffect(() => {
-  //   dispatch(billsRequest());
-  // }, [dispatch]);
 
   return (
     <Root>
