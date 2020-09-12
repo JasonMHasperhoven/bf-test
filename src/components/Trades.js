@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useSelector } from 'react-redux';
+import timestampToTime from '../helpers/timestampToTime';
 
 const Root = styled.div`
   background: ${(props) => props.theme.secondaryBg};
@@ -35,10 +36,12 @@ const List = styled.div`
 const ListHeader = styled.div`
   color: ${(props) => props.theme.primaryTextColor3};
   padding: ${(props) => props.theme.spacing()};
+  padding-top: 0;
 `;
 
 const ListBody = styled.div`
   padding: ${(props) => props.theme.spacing()};
+  padding-top: 0;
 `;
 
 const Row = styled.div`
@@ -46,26 +49,21 @@ const Row = styled.div`
   display: flex;
   border-radius: 4px;
 
-  &:hover {
-    background: hsla(0, 0%, 39.2%, 0.1);
-  }
+  ${(props) =>
+    props.positive !== undefined &&
+    `
+    background: rgba(${
+      props.positive ? props.theme.buyColorRgb : props.theme.sellColorRgb
+    }, 0.1);
+  `};
 `;
 
 const Col = styled.div`
-  width: 33%;
+  width: 33.33%;
   text-align: right;
 `;
 
-function timestampToTime(timestamp) {
-  var date = new Date(timestamp * 1000);
-  var hours = date.getHours();
-  var minutes = '0' + date.getMinutes();
-  var seconds = '0' + date.getSeconds();
-
-  return hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
-}
-
-export default function Trades(props) {
+export default function Trades() {
   const trades = useSelector((state) => Object.values(state.trades.data));
 
   return (
@@ -85,7 +83,7 @@ export default function Trades(props) {
           </ListHeader>
           <ListBody>
             {trades.map((trade) => (
-              <Row key={trade.id}>
+              <Row key={trade.id} positive={trade.amount > 0}>
                 <Col>{timestampToTime(trade.mts)}</Col>
                 <Col>{trade.price}</Col>
                 <Col>{trade.amount}</Col>

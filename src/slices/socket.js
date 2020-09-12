@@ -71,7 +71,7 @@ const socketSlice = createSlice({
     [connect.pending]: (state) => {
       state.isConnecting = true;
     },
-    [connect.fulfilled]: (state, action) => {
+    [connect.fulfilled]: (state) => {
       state.isConnected = true;
       state.isConnecting = false;
     },

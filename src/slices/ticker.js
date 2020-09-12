@@ -42,6 +42,7 @@ const tickerSlice = createSlice({
         HIGH,
         LOW,
       });
+
       state.data.dailyChange = state.data.dailyChange.toFixed(2);
       state.data.dailyChangeRelative = (
         state.data.dailyChangeRelative * 100

@@ -1,5 +1,4 @@
 import { createSlice } from '@reduxjs/toolkit';
-import camelcaseKeys from '../helpers/camelcaseKeys';
 
 const initialState = {
   isSubscribed: false,
@@ -16,8 +15,6 @@ const tradesSlice = createSlice({
       state.chanId = action.payload.chanId;
     },
     receiveMessage: (state, action) => {
-      console.log('action.payload', action.payload);
-
       state.data = action.payload.reduce(
         (trades, [ID, MTS, AMOUNT, PRICE]) => ({
           ...trades,
