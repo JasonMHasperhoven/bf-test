@@ -1,5 +1,3 @@
-// import store from '../store';
-
 export let socket;
 
 export function connect() {
@@ -38,9 +36,10 @@ export function subscribeBook() {
   });
 }
 
-// socket.onmessage = (event) => {
-//   store.dispatch({
-//     type: 'receiveMessage',
-//     payload: JSON.parse(event.data),
-//   });
-// };
+export function subscribeTrades() {
+  send({
+    event: 'subscribe',
+    channel: 'trades',
+    symbol: 'tBTCUSD',
+  });
+}

@@ -1,7 +1,8 @@
-import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
+import { configureStore } from '@reduxjs/toolkit';
 import socketSlice from './slices/socket';
 import tickerSlice from './slices/ticker';
 import bookSlice from './slices/book';
+import tradesSlice from './slices/trades';
 
 export const makeStore = (preloadedState = {}) =>
   configureStore({
@@ -10,21 +11,8 @@ export const makeStore = (preloadedState = {}) =>
       socket: socketSlice.reducer,
       ticker: tickerSlice.reducer,
       book: bookSlice.reducer,
+      trades: tradesSlice.reducer,
     },
-    // middleware: getDefaultMiddleware({
-    //   // thunk: {
-    //   //   extraArgument: myCustomApiService,
-    //   // },
-    //   // https://redux-toolkit.js.org/api/serializabilityMiddleware
-    //   // serializableCheck: {
-    //   //   warnAfter: 100,
-    //   // },
-    //   // // https://redux-toolkit.js.org/api/immutabilityMiddleware
-    //   // immutableCheck: {
-    //   //   warnAfter: 100,
-    //   // },
-    //   // ignoredActions: 'socket/connect',
-    // }),
   });
 
 const store = makeStore();

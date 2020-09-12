@@ -8,6 +8,7 @@ const Root = styled.div`
   display: flex;
   background: ${(props) => props.theme.secondaryBg};
   padding: ${(props) => props.theme.spacing()};
+  border-radius: 6px;
 `;
 
 const Icon = styled.img`
@@ -44,18 +45,20 @@ export default function Ticker(props) {
       <Icon src="https://www.bitfinex.com/assets/BTC-alt-631a4985ef5564fba7508526f8952ba54cd598318506bee963cc9b6d00600278.svg" />
       <TextWrapper>
         <Text>BTC/USD</Text>
-        <SubText>VOL {formatter.format(ticker.volume)}</SubText>
-        <SubText>LOW {formatter.format(ticker.low)}</SubText>
+        <SubText>
+          VOL {ticker.volume && formatter.format(ticker.volume)}
+        </SubText>
+        <SubText>LOW {ticker.low && formatter.format(ticker.low)}</SubText>
       </TextWrapper>
       <TextWrapper>
-        <Text>{formatter.format(ticker.lastPrice)}</Text>
+        <Text>{ticker.lastPrice && formatter.format(ticker.lastPrice)}</Text>
         <DailyChange
           positive={ticker.dailyChangeRelative > 0}
           negative={ticker.dailyChangeRelative < 0}
         >
           {ticker.dailyChange} ({ticker.dailyChangeRelative}%)
         </DailyChange>
-        <SubText>HIGH {formatter.format(ticker.high)}</SubText>
+        <SubText>HIGH {ticker.high && formatter.format(ticker.high)}</SubText>
       </TextWrapper>
     </Root>
   );

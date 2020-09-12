@@ -1,19 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import formatter from '../helpers/formatter';
-// import Loader from './Loader';
-// import Button from './Button';
-// import {
-//   billsRequest,
-//   removeBillRequest,
-//   addBillRequest,
-// } from '../slices/bills';
-// import { RootState } from '../store';
 
 const Root = styled.div`
   background: ${(props) => props.theme.secondaryBg};
   width: 800px;
+  margin-right: 40px;
+  border-radius: 6px;
 `;
 
 const Header = styled.div`
@@ -52,6 +46,11 @@ const ListBody = styled.div`
 const Row = styled.div`
   width: 100%;
   display: flex;
+  border-radius: 4px;
+
+  &:hover {
+    background: hsla(0, 0%, 39.2%, 0.1);
+  }
 `;
 
 const Col = styled.div`
@@ -60,7 +59,10 @@ const Col = styled.div`
 `;
 
 export default function OrderBook(props) {
-  const { bids, asks } = useSelector((state) => state.book);
+  const { bids, asks } = useSelector((state) => ({
+    bids: Object.values(state.book.bids),
+    asks: Object.values(state.book.asks),
+  }));
 
   return (
     <Root>
@@ -79,16 +81,14 @@ export default function OrderBook(props) {
             </Row>
           </ListHeader>
           <ListBody>
-            {Object.values(bids)
-              .reverse()
-              .map((order) => (
-                <Row key={order.count + order.amount + order.price}>
-                  <Col>{order.count}</Col>
-                  <Col>{order.amount}</Col>
-                  <Col>{order.total}</Col>
-                  <Col>{formatter.format(order.price)}</Col>
-                </Row>
-              ))}
+            {bids.reverse().map((order) => (
+              <Row key={order.price}>
+                <Col>{order.count}</Col>
+                <Col>{order.amount}</Col>
+                <Col>{order.total}</Col>
+                <Col>{formatter.format(order.price)}</Col>
+              </Row>
+            ))}
           </ListBody>
         </List>
         <List>
@@ -101,8 +101,8 @@ export default function OrderBook(props) {
             </Row>
           </ListHeader>
           <ListBody>
-            {Object.values(asks).map((order) => (
-              <Row key={order.count + order.amount + order.price}>
+            {asks.map((order) => (
+              <Row key={order.price}>
                 <Col>{formatter.format(order.price)}</Col>
                 <Col>{order.total}</Col>
                 <Col>{order.amount}</Col>

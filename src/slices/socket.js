@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import * as webSocketService from '../services/websocket';
 import tickerSlice from './ticker';
 import bookSlice from './book';
+import tradesSlice from './trades';
 
 export const connect = createAsyncThunk(
   'socket/connect',
@@ -9,10 +10,10 @@ export const connect = createAsyncThunk(
     webSocketService.connect().then(({ onopenEvent, socket }) => {
       webSocketService.subscribeTicker();
       webSocketService.subscribeBook();
+      webSocketService.subscribeTrades();
 
       socket.onmessage = (event) => {
         const data = JSON.parse(event.data);
-        // console.log('socket.onmessage -> data', data);
 
         if (data.event === 'subscribed' && data.channel === 'ticker') {
           dispatch(tickerSlice.actions.subscribed(data));
@@ -20,6 +21,10 @@ export const connect = createAsyncThunk(
 
         if (data.event === 'subscribed' && data.channel === 'book') {
           dispatch(bookSlice.actions.subscribed(data));
+        }
+
+        if (data.event === 'subscribed' && data.channel === 'trades') {
+          dispatch(tradesSlice.actions.subscribed(data));
         }
 
         if (Array.isArray(data)) {
@@ -31,9 +36,11 @@ export const connect = createAsyncThunk(
           }
 
           if (chanId === rootState.book.chanId && payload !== 'hb') {
-            dispatch(
-              bookSlice.actions.receiveMessage({ data: payload, rootState })
-            );
+            dispatch(bookSlice.actions.receiveMessage(payload));
+          }
+
+          if (chanId === rootState.trades.chanId && payload !== 'hb') {
+            dispatch(tradesSlice.actions.receiveMessage(payload));
           }
         }
       };

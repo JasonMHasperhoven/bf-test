@@ -17,7 +17,7 @@ const bookSlice = createSlice({
       state.chanId = action.payload.chanId;
     },
     receiveMessage: (state, action) => {
-      const [PRICE, COUNT, AMOUNT] = action.payload.data;
+      const [PRICE, COUNT, AMOUNT] = action.payload;
 
       const order = camelcaseKeys({
         PRICE,
