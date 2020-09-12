@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useSelector } from 'react-redux';
 import formatter from '../helpers/formatter';
@@ -13,7 +13,12 @@ const Root = styled.div`
 const Header = styled.div`
   width: 100%;
   display: flex;
+  justify-content: space-between;
   padding: ${(props) => props.theme.spacing()};
+`;
+
+const Flex = styled.div`
+  display: flex;
 `;
 
 const Title = styled.div`
@@ -58,7 +63,30 @@ const Col = styled.div`
   text-align: right;
 `;
 
-export default function OrderBook(props) {
+const PrecisionButtons = styled.div`
+  align-self: flex-end;
+`;
+
+const PrecisionButton = styled.button`
+  background: none;
+  border: 0;
+  width: 24px;
+  height: 24px;
+  color: white;
+
+  &:disabled {
+    cursor: default;
+    opacity: 0.5;
+  }
+`;
+
+function roundPrice(price, precision = 0) {
+  const pow = Math.pow(10, +Math.abs(precision - 3));
+  return Math.round(price / pow) * pow;
+}
+
+export default function OrderBook() {
+  const [precision, setPrecision] = useState(3);
   const { bids, asks } = useSelector((state) => ({
     bids: Object.values(state.book.bids),
     asks: Object.values(state.book.asks),
@@ -67,8 +95,28 @@ export default function OrderBook(props) {
   return (
     <Root>
       <Header>
-        <Title>Orderbook</Title>
-        <Symbol>BTC/USD</Symbol>
+        <Flex>
+          <Title>Orderbook</Title>
+          <Symbol>BTC/USD</Symbol>
+        </Flex>
+        <PrecisionButtons>
+          <PrecisionButton
+            disabled={precision === 0}
+            onClick={
+              precision > 0 ? () => setPrecision(precision - 1) : undefined
+            }
+          >
+            -
+          </PrecisionButton>
+          <PrecisionButton
+            disabled={precision === 3}
+            onClick={
+              precision < 3 ? () => setPrecision(precision + 1) : undefined
+            }
+          >
+            +
+          </PrecisionButton>
+        </PrecisionButtons>
       </Header>
       <Body>
         <List>
@@ -84,9 +132,11 @@ export default function OrderBook(props) {
             {bids.reverse().map((order) => (
               <Row key={order.price}>
                 <Col>{order.count}</Col>
-                <Col>{order.amount}</Col>
-                <Col>{order.total}</Col>
-                <Col>{formatter.format(order.price)}</Col>
+                <Col>{Number(order.amount).toFixed(precision)}</Col>
+                <Col>{Number(order.total).toFixed(precision)}</Col>
+                <Col>
+                  {formatter.format(roundPrice(order.price, precision))}
+                </Col>
               </Row>
             ))}
           </ListBody>
@@ -103,9 +153,11 @@ export default function OrderBook(props) {
           <ListBody>
             {asks.map((order) => (
               <Row key={order.price}>
-                <Col>{formatter.format(order.price)}</Col>
-                <Col>{order.total}</Col>
-                <Col>{order.amount}</Col>
+                <Col>
+                  {formatter.format(roundPrice(order.price, precision))}
+                </Col>
+                <Col>{Number(order.total).toFixed(precision)}</Col>
+                <Col>{Number(order.amount).toFixed(precision)}</Col>
                 <Col>{order.count}</Col>
               </Row>
             ))}

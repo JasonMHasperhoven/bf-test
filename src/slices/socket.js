@@ -31,15 +31,19 @@ export const connect = createAsyncThunk(
           const rootState = getState();
           const [chanId, payload] = data;
 
-          if (chanId === rootState.ticker.chanId && payload !== 'hb') {
+          if (['hb', 'te', 'tu'].includes(payload)) {
+            return;
+          }
+
+          if (chanId === rootState.ticker.chanId) {
             dispatch(tickerSlice.actions.receiveMessage(payload));
           }
 
-          if (chanId === rootState.book.chanId && payload !== 'hb') {
+          if (chanId === rootState.book.chanId) {
             dispatch(bookSlice.actions.receiveMessage(payload));
           }
 
-          if (chanId === rootState.trades.chanId && payload !== 'hb') {
+          if (chanId === rootState.trades.chanId) {
             dispatch(tradesSlice.actions.receiveMessage(payload));
           }
         }
